@@ -56,20 +56,39 @@ def selectionner_client(tree, var_nom, var_tel):
         var_nom.set(vals[1])
         var_tel.set(vals[2])
 
-def ajouter_commande(var_client_id, var_service, tree):
+def ajouter_commande(var_client_id, var_service,var_prix,var_statut, tree):
     cid     = var_client_id.get().strip()
     service = var_service.get().strip()
-    if not cid or not service:
-        messagebox.showwarning("Erreur", "ID client et service sontobligatoires.")
+    prix    = var_prix.get().strip()
+    statut    = var_statut.get().strip()
+    if not cid or not service or not prix or not statut:
+        messagebox.showwarning("Erreur", "ID client, service et prix sont obligatoires.")
         return
     if not client_existe(int(cid)):
         messagebox.showerror("Client introuvable", f"Aucun client avec l'ID {cid}.")
         return
     num  = generer_id(FICHIER_COMMANDES)
     date = datetime.date.today().isoformat()
-    ecrire_ligne(FICHIER_COMMANDES, f"{num};{cid};{service};{date}")
-    tree.insert("", "end", values=(num, cid, service, date))
+    ecrire_ligne(FICHIER_COMMANDES, f"{num};{cid};{service};{prix};{statut};{date}")
+    tree.insert("", "end", values=(num, cid, service, prix,statut,date))
     messagebox.showinfo("Succès", f"Commande #{num} enregistrée.")
+
+def modifier_commande(var_client_id, var_service, var_prix, var_statut, tree):
+    sel = tree.selection()
+    if not sel:
+        messagebox.showwarning("Sélection", "Sélectionnez une commande à modifier.")
+        return
+    num = tree.item(sel[0], "values")[0]
+    client_id = var_client_id.get().strip()
+    service = var_service.get().strip()
+    prix = var_prix.get().strip()
+    statut = var_statut.get().strip()
+    if not client_id or not service or not prix or not statut:
+        messagebox.showwarning("Champ vide", "Remplissez les champs avant de modifier.")
+        return
+    modifier_ligne(FICHIER_COMMANDES, int(num), client_id, service, prix, statut)
+    tree.item(sel[0], values=(num, client_id, service, prix, statut, tree.item(sel[0], "values")[5]))
+    messagebox.showinfo("Mis à jour", f"Commande #{num} modifiée.")
 
 def supprimer_commande(tree):
     sel = tree.selection()
@@ -80,6 +99,15 @@ def supprimer_commande(tree):
     if messagebox.askyesno("Confirmer", f"Supprimer la commande #{num} ?"):
         supprimer_ligne(FICHIER_COMMANDES, int(num))
         tree.delete(sel[0])
+
+def selectionner_commande(tree, var_client_id, var_service, var_prix, var_statut):
+    sel = tree.selection()
+    if sel:
+        vals = tree.item(sel[0], "values")
+        var_client_id.set(vals[1])
+        var_service.set(vals[2])
+        var_prix.set(vals[3])
+        var_statut.set(vals[4])
 
 # ─── FONCTIONS GÉNÉRIQUES DE FICHIER ─────────────────
 
@@ -125,7 +153,7 @@ def charger_clients(tree):
 def charger_commandes(tree):
     for ligne in lire_fichier(FICHIER_COMMANDES):
         p = ligne.split(";")
-        if len(p) == 4: tree.insert("", "end", values=tuple(p))
+        if len(p) == 6: tree.insert("", "end", values=tuple(p))
 
 def client_existe(cid):
     return any(int(l.split(";")[0]) == cid

@@ -7,10 +7,10 @@ def creer_fenetre():
     root.title("GraphiStudio — Gestion des commandes")
     root.geometry("700x520")
 
-    entete = tk.Frame(root, bg="#185FA5", height=48)
+    entete = tk.Frame(root, bg="#1E293B", height=48)
     entete.pack(fill="x")
     tk.Label(entete, text="  GraphiStudio — Système de gestion",
-            bg="#185FA5", fg="white", font=("Arial", 13, "bold")
+            bg="#1E293B", fg="white", font=("Georgia", 15, "bold")
     ).pack(side="left", pady=10)
 
     onglets = ttk.Notebook(root)
