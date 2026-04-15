@@ -1,7 +1,6 @@
 import tkinter as tk
 from exportation import *
 
-
 # liste des services proposés par GraphiStudio
 SERVICES = [
     "Logo",
@@ -272,6 +271,16 @@ def construire_onglet_commandes(parent):
         command=lambda: [var_client_id.set(""), var_service.set(""), var_prix.set(""), var_statut.set("")]
     ).pack(side="left", padx=4)
 
+    tk.Button(
+        cadre_btn,
+        text="Facture PDF",
+        width=12,
+        bg="#22C55E",
+        fg="white",
+        font=("Arial", 10, "bold"),
+        command=lambda: generer_facture_pdf(tree_cmd)
+    ).pack(side="left", padx=4)
+
     # tableau pour afficher les commandes
     colonnes = ("id_cmd", "id_client", "service", "prix","statut", "date")
     tree_cmd = ttk.Treeview(parent, columns=colonnes, show="headings", height=10)
@@ -292,14 +301,6 @@ def construire_onglet_commandes(parent):
     tree_cmd.bind("<<TreeviewSelect>>",
         lambda e: selectionner_commande(tree_cmd, var_client_id, var_service, var_prix, var_statut))
     
-    tk.Button(
-        cadre_btn,
-        text="Facture PDF",
-        width=12,
-        bg="#22C55E",
-        fg="white",
-        font=("Arial", 10, "bold"),
-        command=lambda: generer_facture_pdf(tree_cmd)
-    ).pack(side="left", padx=4)
+    
 
 

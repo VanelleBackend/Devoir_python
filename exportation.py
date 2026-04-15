@@ -199,7 +199,7 @@ def generer_facture_pdf(tree):
     c.setFont("Helvetica-Bold", 18)
     c.drawString(200, 800, "FACTURE GRAPHESTUDIO")
 
-    # 📄 Contenu
+    # Contenu
     c.setFont("Helvetica", 12)
     c.drawString(50, 740, f"Numéro Commande : {num_cmd}")
     c.drawString(50, 720, f"ID Client       : {client_id}")
@@ -208,11 +208,11 @@ def generer_facture_pdf(tree):
     c.drawString(50, 660, f"Statut          : {statut}")
     c.drawString(50, 640, f"Date            : {date}")
 
-    # 💰 Total
+    # Total
     c.setFont("Helvetica-Bold", 14)
     c.drawString(50, 600, f"TOTAL : {prix} FCFA")
 
-    # ✍️ Signature
+    # Signature
     c.setFont("Helvetica", 10)
     c.drawString(50, 550, "Merci pour votre confiance - GraphiStudio")
 
