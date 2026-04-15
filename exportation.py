@@ -1,4 +1,4 @@
-# Importation de library
+# Importation de library (Tkinter pour l'interface graphique, datetime pour les dates, os pour la gestion des fichiers)
 from tkinter import ttk, messagebox
 import datetime, os
 
@@ -6,12 +6,14 @@ import datetime, os
 FICHIER_CLIENTS = "clients.txt"
 FICHIER_COMMANDES = "commandes.txt"
 
+# Function pour générer un nouvel ID unique pour clients et commandes
 def generer_id(fichier):
     lignes = lire_fichier(fichier)
     if not lignes: return 1
     ids = [int(l.split(";")[0]) for l in lignes if l.strip()]
     return max(ids) + 1
 
+# Function d'ajout de clients
 def ajouter_client(var_nom, var_tel, tree):
     nom = var_nom.get().strip()
     tel = var_tel.get().strip()
@@ -24,6 +26,7 @@ def ajouter_client(var_nom, var_tel, tree):
     var_nom.set(""); var_tel.set("")
     messagebox.showinfo("Succès", f"Client #{cid} ajouté.")
 
+# Function de modification de clients
 def modifier_client(var_nom, var_tel, tree):
     sel = tree.selection()
     if not sel:
@@ -39,6 +42,7 @@ def modifier_client(var_nom, var_tel, tree):
     tree.item(sel[0], values=(cid, nom, tel))
     messagebox.showinfo("Mis à jour", f"Client #{cid} modifié.")
 
+# Function de suppression de clients
 def supprimer_client(tree):
     sel = tree.selection()
     if not sel:
@@ -49,6 +53,7 @@ def supprimer_client(tree):
         supprimer_ligne(FICHIER_CLIENTS, int(cid))
         tree.delete(sel[0])
 
+# Function de sélection d'un client dans le tableau pour pré-remplir les champs du formulaire
 def selectionner_client(tree, var_nom, var_tel):
     sel = tree.selection()
     if sel:
@@ -56,6 +61,27 @@ def selectionner_client(tree, var_nom, var_tel):
         var_nom.set(vals[1])
         var_tel.set(vals[2])
 
+# Function de recherche de clients par mot-clé (ID, nom ou téléphone)
+def rechercher_clients(mot_cle, tree):
+    mot_cle = mot_cle.strip().lower()
+
+    # vider le tableau
+    for item in tree.get_children():
+        tree.delete(item)
+
+    # recharger + filtrer
+    for ligne in lire_fichier(FICHIER_CLIENTS):
+        p = ligne.split(";")
+        if len(p) == 3:
+            cid, nom, tel = p
+
+            if (mot_cle in cid.lower()
+                or mot_cle in nom.lower()
+                or mot_cle in tel):
+
+                tree.insert("", "end", values=(cid, nom, tel))
+
+# Function d'ajout de commandes
 def ajouter_commande(var_client_id, var_service,var_prix,var_statut, tree):
     cid     = var_client_id.get().strip()
     service = var_service.get().strip()
@@ -73,6 +99,7 @@ def ajouter_commande(var_client_id, var_service,var_prix,var_statut, tree):
     tree.insert("", "end", values=(num, cid, service, prix,statut,date))
     messagebox.showinfo("Succès", f"Commande #{num} enregistrée.")
 
+# Function de modification de commandes
 def modifier_commande(var_client_id, var_service, var_prix, var_statut, tree):
     sel = tree.selection()
     if not sel:
@@ -90,6 +117,7 @@ def modifier_commande(var_client_id, var_service, var_prix, var_statut, tree):
     tree.item(sel[0], values=(num, client_id, service, prix, statut, tree.item(sel[0], "values")[5]))
     messagebox.showinfo("Mis à jour", f"Commande #{num} modifiée.")
 
+# Function de suppression de commandes
 def supprimer_commande(tree):
     sel = tree.selection()
     if not sel:
@@ -100,6 +128,7 @@ def supprimer_commande(tree):
         supprimer_ligne(FICHIER_COMMANDES, int(num))
         tree.delete(sel[0])
 
+# Function de sélection d'une commande dans le tableau pour pré-remplir les champs du formulaire
 def selectionner_commande(tree, var_client_id, var_service, var_prix, var_statut):
     sel = tree.selection()
     if sel:
@@ -146,10 +175,14 @@ def modifier_ligne(chemin, identifiant, *champs):
 # ─── CHARGEMENT INITIAL ────────────────────────────────
 
 def charger_clients(tree):
+    # Vider le tableau avant de charger les clients
+    for item in tree.get_children():
+        tree.delete(item)
+
     for ligne in lire_fichier(FICHIER_CLIENTS):
         p = ligne.split(";")
-        if len(p) == 3: tree.insert("", "end", values=tuple(p))
-
+        if len(p) == 3:
+            tree.insert("", "end", values=tuple(p))
 def charger_commandes(tree):
     for ligne in lire_fichier(FICHIER_COMMANDES):
         p = ligne.split(";")
@@ -158,3 +191,4 @@ def charger_commandes(tree):
 def client_existe(cid):
     return any(int(l.split(";")[0]) == cid
                 for l in lire_fichier(FICHIER_CLIENTS))
+
