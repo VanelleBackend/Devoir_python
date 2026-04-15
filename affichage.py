@@ -3,7 +3,30 @@ from exportation import *
 
 
 # liste des services proposés par GraphiStudio
-SERVICES = ["Conception de Logo", "Banderole", "Site Web",]
+SERVICES = [
+    "Logo",
+    "Flyer",
+    "Affiche publicitaire",
+    "Carte de visite",
+    "Site Web",
+    "E-commerce",
+    "UI/UX",
+    "Banderole",
+    "Réseaux sociaux",
+    "Montage vidéo"
+]
+PRIX_SERVICES = {
+    "Logo": 5000,
+    "Flyer": 2500,
+    "Affiche publicitaire": 4000,
+    "Carte de visite": 2000,
+    "Site Web": 50000,
+    "E-commerce": 80000,
+    "UI/UX": 30000,
+    "Banderole": 3500,
+    "Réseaux sociaux": 3000,
+    "Montage vidéo": 10000
+}
 
 # Placeholder pour le champs de recherche
 def add_placeholder(entry, placeholder):
@@ -161,6 +184,11 @@ def construire_onglet_commandes(parent):
     var_prix      = tk.StringVar()
     var_statut      = tk.StringVar()
 
+    def maj_prix_auto(event):
+        service = var_service.get()
+        if service in PRIX_SERVICES:
+            var_prix.set(PRIX_SERVICES[service])
+
     cadre_form = tk.LabelFrame(parent,
                     text=" Nouvelle commande ", padx=10, pady=10)
     cadre_form.pack(fill="x", padx=10, pady=8)
@@ -182,6 +210,7 @@ def construire_onglet_commandes(parent):
         row=1, column=0, sticky="w", pady=4)
     combo_service = ttk.Combobox(cadre_form, textvariable=var_service,
                         values=SERVICES, state="readonly", width=28)
+    combo_service.bind("<<ComboboxSelected>>", maj_prix_auto)
     combo_service.grid(row=1, column=1, padx=8, sticky="w")
     combo_service.set(SERVICES[0])
 

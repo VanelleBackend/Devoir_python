@@ -1,6 +1,1 @@
-1;1;Conception de Logo;4000;Terminé
-2;2;Site Web;50000;A faire;2026-04-14
-3;2;Conception de Logo;10000;Terminé
-4;2;Banderole;30000;A faire;2026-04-14
-5;1;Banderole;40000;En cour;2026-04-14
-6;1;Site Web;400000;En cour;2026-04-14
+
