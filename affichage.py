@@ -291,5 +291,15 @@ def construire_onglet_commandes(parent):
     charger_commandes(tree_cmd)
     tree_cmd.bind("<<TreeviewSelect>>",
         lambda e: selectionner_commande(tree_cmd, var_client_id, var_service, var_prix, var_statut))
+    
+    tk.Button(
+        cadre_btn,
+        text="Facture PDF",
+        width=12,
+        bg="#22C55E",
+        fg="white",
+        font=("Arial", 10, "bold"),
+        command=lambda: generer_facture_pdf(tree_cmd)
+    ).pack(side="left", padx=4)
 
 

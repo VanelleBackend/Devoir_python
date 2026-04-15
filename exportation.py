@@ -1,6 +1,8 @@
 # Importation de library (Tkinter pour l'interface graphique, datetime pour les dates, os pour la gestion des fichiers)
 from tkinter import ttk, messagebox
 import datetime, os
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 
 # Fichier de stockage des clients et commandes
 FICHIER_CLIENTS = "clients.txt"
@@ -171,6 +173,52 @@ def modifier_ligne(chemin, identifiant, *champs):
         else:
             nouvelles.append(l)
     reecrire_fichier(chemin, nouvelles)
+
+# Function pour générer une facture PDF à partir d'une commande sélectionnée dans le tableau
+def generer_facture_pdf(tree):
+    sel = tree.selection()
+
+    if not sel:
+        messagebox.showwarning("Sélection", "Sélectionnez une commande.")
+        return
+
+    values = tree.item(sel[0], "values")
+
+    num_cmd   = values[0]
+    client_id = values[1]
+    service   = values[2]
+    prix      = values[3]
+    statut    = values[4]
+    date      = values[5]
+
+    nom_fichier = f"facture_{num_cmd}.pdf"
+
+    c = canvas.Canvas(nom_fichier, pagesize=A4)
+
+    # Titre
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(200, 800, "FACTURE GRAPHESTUDIO")
+
+    # 📄 Contenu
+    c.setFont("Helvetica", 12)
+    c.drawString(50, 740, f"Numéro Commande : {num_cmd}")
+    c.drawString(50, 720, f"ID Client       : {client_id}")
+    c.drawString(50, 700, f"Service         : {service}")
+    c.drawString(50, 680, f"Prix            : {prix} FCFA")
+    c.drawString(50, 660, f"Statut          : {statut}")
+    c.drawString(50, 640, f"Date            : {date}")
+
+    # 💰 Total
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, 600, f"TOTAL : {prix} FCFA")
+
+    # ✍️ Signature
+    c.setFont("Helvetica", 10)
+    c.drawString(50, 550, "Merci pour votre confiance - GraphiStudio")
+
+    c.save()
+
+    messagebox.showinfo("Succès", f"Facture PDF générée : {nom_fichier}")
 
 # ─── CHARGEMENT INITIAL ────────────────────────────────
 
